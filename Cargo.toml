@@ -1,0 +1,28 @@
+[package]
+name = "jonitor"
+version = "1.1.0"
+edition = "2021"
+
+[dependencies]
+axum = { version = "0.7.5", default-features = false, features = ["http1", "tokio", "ws"] }
+byteorder = "1.5.0"
+futures-util = { version = "0.3.30", default-features = false, features = ["sink"] }
+serde = { version = "1.0.210", features = ["derive"] }
+serde_json = "1.0.128"
+tokio = { version = "1.40.0", default-features = false, features = ["rt", "net", "signal", "sync"] }
+tower-http = { version = "0.5.2", features = ["fs"] }
+
+[dependencies.windows-sys]
+version = "0.59.0"
+features = [
+    "Win32_Foundation",
+    "Win32_System_Console",
+    "Win32_System_SystemInformation",
+    "Win32_System_Memory",
+]
+
+[build-dependencies]
+embed-resource = "2.4.3"
+
+[profile.release]
+lto = true

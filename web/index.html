@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="stylesheet" href="/src/main.css" />
+        <title>Jonitor</title>
+        <script>
+            const theme = localStorage.getItem("theme");
+            if (theme && theme !== "auto") {
+                document.documentElement.setAttribute("data-theme", theme);
+            } else {
+                localStorage.setItem("theme", "auto");
+            }
+        </script>
+    </head>
+    <body>
+        <noscript>JavaScript needs to be enabled.</noscript>
+        <div id="loader" class="display-none"></div>
+        <script type="module" src="/src/main.ts"></script>
+        <main id="main-container" class="display-none">
+            <div style="flex-grow: 1"></div>
+            <img
+                src="/favicon.svg"
+                width="100"
+                height="100"
+                aria-label="logo"
+            />
+            <h3>Jonitor</h3>
+            <p>View HWiNFO data as:</p>
+            <div class="button-big-group">
+                <button id="tables-button" class="button-big">
+                    <img src="/src/assets/table.svg" aria-hidden="true" />
+                    <span id="tables-label">Tables</span>
+                </button>
+                <button id="charts-button" class="button-big">
+                    <img src="/src/assets/chart.svg" aria-hidden="true" />
+                    <span id="charts-label">Charts</span>
+                </button>
+            </div>
+            <div id="theme-group">
+                <label for="theme-select" style="margin: 0px">Theme:</label>
+                <select id="theme-select"></select>
+            </div>
+            <div style="flex-grow: 2"></div>
+        </main>
+        <template id="footer-template">
+            <footer id="footer">
+                Version %APP_VERSION% •
+                <a href="https://github.com/Jurnace/jonitor" target="_blank"
+                    >GitHub</a
+                >
+                •
+                <button id="footer-settings">Settings</button>
+            </footer>
+        </template>
+    </body>
+</html>

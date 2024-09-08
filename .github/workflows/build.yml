@@ -1,0 +1,47 @@
+name: Build Jonitor
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build and upload to GitHub release
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/iron
+      - name: Build the backend
+        run: cargo build --release --locked
+      - name: Build the frontend
+        run: |
+          cd web
+          npm ci
+          npm run build
+      - name: Package as zip file
+        run: |
+          New-Item -Name "out" -ItemType "directory" | Out-Null
+          Copy-Item -Path ".\target\release\jonitor.exe" -Destination ".\out"
+          Copy-Item -Path ".\web\dist" -Destination ".\out\public" -Recurse
+          New-Item -Path ".\out\public" -Name "configs" -ItemType "directory" | Out-Null
+
+          $FileName = "jonitor-$($env:GITHUB_REF_NAME.Substring(1)).zip"
+          Compress-Archive -Path ".\out\*" -DestinationPath ".\$FileName"
+
+          $Hash = Get-FileHash -Path ".\$FileName" -Algorithm "SHA256" | Select-Object -ExpandProperty "Hash"
+          Write-Output "sha256 $FileName $Hash"
+          $Hash | Out-File -Encoding "ascii" -FilePath ".\$($FileName).sha256"
+      - name: Upload to GitHub release
+        run: |
+          $FileName = "jonitor-$($env:GITHUB_REF_NAME.Substring(1)).zip"
+          gh release upload $env:GITHUB_REF_NAME "$FileName" "$($FileName).sha256"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
